@@ -2,6 +2,12 @@
 
 ## About this Repository
 
+This is a fork of the [Elastic Dockerfiles repo](https://github.com/elastic/dockerfiles)
+with changes to the Kibana Dockerfile to build for Arm64.  It was tested on the
+Raspberry Pi 4.
+
+Upstream README follow:
+
 This repo is used to store the Dockerfiles which can be used to build Docker images 
 for each product released in the stack. Those Dockerfiles were generated from the 
 products' own repositories for which you can get the links in the sections below. 

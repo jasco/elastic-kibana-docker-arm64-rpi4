@@ -13,13 +13,14 @@ FROM centos:8 AS builder
 
 
 RUN cd /opt && \
-  curl --retry 8 -s -L -O https://artifacts.elastic.co/downloads/kibana/kibana-7.11.2-linux-x86_64.tar.gz && \
+  ARCHITECTURE=aarch64 ; \
+  curl --retry 8 -s -L -O "https://artifacts.elastic.co/downloads/kibana/kibana-7.11.2-linux-${ARCHITECTURE}.tar.gz" && \
   cd -
 
 
 RUN mkdir /usr/share/kibana
 WORKDIR /usr/share/kibana
-RUN tar --strip-components=1 -zxf /opt/kibana-7.11.2-linux-x86_64.tar.gz
+RUN ARCHITECTURE=aarch64 ; tar --strip-components=1 -zxf /opt/kibana-7.11.2-linux-${ARCHITECTURE}.tar.gz
 # Ensure that group permissions are the same as user permissions.
 # This will help when relying on GID-0 to run Kibana, rather than UID-1000.
 # OpenShift does this, for example.
@@ -39,7 +40,7 @@ EXPOSE 5601
 RUN for iter in {1..10}; do \
       yum update --setopt=tsflags=nodocs -y && \
       yum install --setopt=tsflags=nodocs -y \
-        fontconfig freetype shadow-utils libnss3.so  && \
+        fontconfig freetype shadow-utils nss  && \
       yum clean all && exit_code=0 && break || exit_code=$? && echo "yum error: retry $iter in 10s" && \
       sleep 10; \
     done; \
@@ -48,7 +49,7 @@ RUN for iter in {1..10}; do \
 # Add an init process, check the checksum to make sure it's a match
 RUN set -e ; \
   TINI_VERSION='v0.19.0' ; \
-  TINI_BIN='tini-amd64' ; \
+  TINI_BIN='tini-arm64' ; \
   curl --retry 8 -S -L -O "https://github.com/krallin/tini/releases/download/${TINI_VERSION}/${TINI_BIN}" ; \
   curl --retry 8 -S -L -O "https://github.com/krallin/tini/releases/download/${TINI_VERSION}/${TINI_BIN}.sha256sum" ; \
   sha256sum -c "${TINI_BIN}.sha256sum" ; \
