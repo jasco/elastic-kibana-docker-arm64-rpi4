@@ -6,7 +6,28 @@ This is a fork of the [Elastic Dockerfiles repo](https://github.com/elastic/dock
 with changes to the Kibana Dockerfile to build for Arm64.  It was tested on the
 Raspberry Pi 4.
 
-Upstream README follow:
+When used with deviantony/docker-elk the following docker-compose snippet was used for kibana
+after pulling this repository into the directory `elastic-docker`.
+
+```yaml
+  kibana:
+    build:
+      dockerfile: Dockerfile
+      context: ./elastic-docker/kibana/
+    volumes:
+      - type: bind
+        source: ./kibana/config/kibana.yml
+        target: /usr/share/kibana/config/kibana.yml
+        read_only: true
+    ports:
+      - "5601:5601"
+    networks:
+      - elk
+    depends_on:
+      - elasticsearch
+```
+
+Upstream README follows:
 
 This repo is used to store the Dockerfiles which can be used to build Docker images 
 for each product released in the stack. Those Dockerfiles were generated from the 
